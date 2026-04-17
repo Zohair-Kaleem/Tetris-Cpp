@@ -182,6 +182,7 @@
 #define RED        CLITERAL(Color){ 230, 41, 55, 255 }     // Red
 #define MAROON     CLITERAL(Color){ 190, 33, 55, 255 }     // Maroon
 #define GREEN      CLITERAL(Color){ 0, 228, 48, 255 }      // Green
+#define CYAN      CLITERAL(Color){ 0, 255, 255, 255 }      // CYAN
 #define LIME       CLITERAL(Color){ 0, 158, 47, 255 }      // Lime
 #define DARKGREEN  CLITERAL(Color){ 0, 117, 44, 255 }      // Dark Green
 #define SKYBLUE    CLITERAL(Color){ 102, 191, 255, 255 }   // Sky Blue

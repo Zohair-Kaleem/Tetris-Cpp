@@ -32,14 +32,62 @@ public:
     }
 };
 
+class OShape : public Shape { 
+public:
+    OShape() { color = YELLOW; blocks = {{{0, 0}, {1, 0}, {0, 1}, {1, 1}}}; }
+    void Rotate() override {
+        return; 
+    }
+
+};
+class SShape : public Shape {
+public:
+    SShape() { color = GREEN; blocks = {{{1, 0}, {2, 0}, {0, 1}, {1, 1}}}; }
+    
+    void Rotate() override {
+        // Rotate around the block at index 3 (1, 1)
+        int px = blocks[3].x;
+        int py = blocks[3].y;
+        for (int i = 0; i < 4; i++) {
+            int oldX = blocks[i].x - px;
+            int oldY = blocks[i].y - py;
+            blocks[i].x = -oldY + px;
+            blocks[i].y = oldX + py;
+        }
+    }
+};
+
+class ZShape : public Shape { 
+public:
+    ZShape() { color = RED; blocks = {{{0, 0}, {1, 0}, {1, 1}, {2, 1}}}; }
+    
+    void Rotate() override {
+        // Rotate around the block at index 2 (1, 1)
+        int px = blocks[2].x;
+        int py = blocks[2].y;
+        for (int i = 0; i < 4; i++) {
+            int oldX = blocks[i].x - px;
+            int oldY = blocks[i].y - py;
+            blocks[i].x = -oldY + px;
+            blocks[i].y = oldX + py;
+        }
+    }
+};
+
 class LShape : public Shape {
 public:
     LShape() { color = ORANGE; blocks = {{{0, -1}, {0, 0}, {0, 1}, {1, 1}}}; }
 };
 
+class JShape: public Shape{
+public:
+    // Adjusted J-Shape coordinates to rotate better around 0,0
+    JShape(){ color = BLUE; blocks = {{{0, -1}, {0, 0}, {0, 1}, {-1, 1}}}; }
+};
+
 class IShape : public Shape {
 public:
-    IShape() { color = SKYBLUE; blocks = {{{0, -1}, {0, 0}, {0, 1}, {0, 2}}}; }
+    IShape() { color =CYAN ; blocks = {{{0, -1}, {0, 0}, {0, 1}, {0, 2}}}; }
 };
 
 class TShape : public Shape {
@@ -47,11 +95,4 @@ public:
     TShape() { color = PURPLE; blocks = {{{0, 0}, {-1, 0}, {1, 0}, {0, 1}}}; }
 };
 
-class OShape : public Shape { // Square doesn't rotate well with the math, so we'd override it
-public:
-    OShape() { color = YELLOW; blocks = {{{0, 0}, {1, 0}, {0, 1}, {1, 1}}}; }
-    void Rotate() override{
-        return;
-    }
-};
 #endif

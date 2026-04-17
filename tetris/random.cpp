@@ -8,9 +8,13 @@ const int screenHeight = 600;
 const int cellSize = 40;
 int shapeX = 10;
 int shapeY = 0;
+float planeX=9;
+float planeY=8;
 float timer = 0;
 
 long long score=0;
+
+bool planeFlag=false;
 
 const int gridCols = 20;
 const int gridRows = 15;
@@ -20,15 +24,47 @@ Vector2 speakerIconPositions={19*cellSize,cellSize};
 bool speakerOnFlag=true;
 bool gameOver=false;
 // Function to get a random shape pointer
+void summonPlane(){
+    planeFlag=true;
+}
 Shape* GetRandomShape() {
-    int type = GetRandomValue(0, 3); // Included all 5 shapes
+    int type = GetRandomValue(5, 6); // Included all 5 shapes
+    
     switch (type) {
         case 0: return new LShape();
         case 1: return new IShape();
         case 2: return new TShape();
+        case 3:return new SShape();
+        case 4: return new ZShape();
+        case 5:return new JShape();
+        case 6:summonPlane();
         default: return new OShape();
     }
 }
+
+void handlePlaneMovements(float &planeX,float &planeY){
+    if (IsKeyDown(KEY_DOWN)) {
+        if ((int)planeY * cellSize < screenHeight) {
+            planeY += 0.02f;
+        }
+    } 
+    if (IsKeyDown(KEY_UP)) { // Changed to 'if' so diagonal movement works
+        if (planeY > 0.0f) {
+            planeY -= 0.02f;
+        }
+    } 
+    if (IsKeyDown(KEY_LEFT)) {
+        if (planeX > 0.0f) {
+            planeX -= 0.02f;
+        }
+    } 
+    if (IsKeyDown(KEY_RIGHT)) {
+        if ((int)planeX * cellSize < screenWidth) {
+            planeX += 0.02f;
+        }
+    }
+}
+
 
 // Helper to check if a position is "blocked"
 bool IsPositionBlocked(int x, int y, const Tetromino& blocks, int gridRows, int gridCols, Cell gameGrid[15][20]) {
@@ -93,6 +129,12 @@ int main() {
     Texture2D speakerOntexture = LoadTextureFromImage(speakerOn);          // Image converted to texture, GPU memory (VRAM)
     UnloadImage(speakerOn);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
     
+    Image plane = LoadImage("tetris\\resources\\plane.png");     // Loaded in CPU memory (RAM)
+    ImageResize(&plane,80,80);
+    Texture2D planetexture = LoadTextureFromImage(plane);          // Image converted to texture, GPU memory (VRAM)
+    UnloadImage(plane);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
+
+
     Rectangle hitbox = { speakerIconPositions.x, speakerIconPositions.y, (float)speakerOntexture.width, (float)speakerOntexture.height };
     
     Image speakerOff=LoadImage("tetris\\resources\\speakerOff.png");
@@ -203,10 +245,15 @@ int main() {
             }
             
             // Draw Falling Shape
-            currShape->Draw(shapeX, shapeY, cellSize);
+            if(!planeFlag){
+                currShape->Draw(shapeX, shapeY, cellSize);
+            }
             DrawText(TextFormat("Score: %08i", score), 5*cellSize, cellSize, 50, RED);
             DrawTexture(speakerOnFlag?speakerOntexture:speakerOfftexture,speakerIconPositions.x,speakerIconPositions.y,WHITE);
-            
+            if(planeFlag){
+                DrawTexture(planetexture,planeX*cellSize,planeY*cellSize,WHITE);
+                handlePlaneMovements(planeX,planeY);
+            }
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                 Vector2 mousePoint = GetMousePosition();
                 handleMutingMusic(mousePoint,hitbox,music);
